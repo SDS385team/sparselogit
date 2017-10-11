@@ -4,7 +4,7 @@
 \alias{sigmoid}
 \title{Sigmoid function with truncation}
 \usage{
-sigmoid(u, eps = 1e-06)
+sigmoid(A)
 }
 \arguments{
 \item{u:}{numeric vector of input}

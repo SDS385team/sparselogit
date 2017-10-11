@@ -7,86 +7,99 @@
 using namespace Rcpp;
 
 // sigmoid
-arma::vec sigmoid(const arma::vec& u, double eps);
-RcppExport SEXP _fastsgd_sigmoid(SEXP uSEXP, SEXP epsSEXP) {
+arma::mat sigmoid(const arma::sp_mat A);
+RcppExport SEXP _sparselogit_sigmoid(SEXP ASEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::vec& >::type u(uSEXP);
-    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
-    rcpp_result_gen = Rcpp::wrap(sigmoid(u, eps));
+    Rcpp::traits::input_parameter< const arma::sp_mat >::type A(ASEXP);
+    rcpp_result_gen = Rcpp::wrap(sigmoid(A));
     return rcpp_result_gen;
 END_RCPP
 }
 // nlogl_binom
-double nlogl_binom(const arma::vec& beta, const arma::mat& X, const arma::vec& y, int m);
-RcppExport SEXP _fastsgd_nlogl_binom(SEXP betaSEXP, SEXP XSEXP, SEXP ySEXP, SEXP mSEXP) {
+double nlogl_binom(const arma::sp_mat& beta, const arma::sp_mat& X, const arma::sp_mat& y, const int m, const double lambda);
+RcppExport SEXP _sparselogit_nlogl_binom(SEXP betaSEXP, SEXP XSEXP, SEXP ySEXP, SEXP mSEXP, SEXP lambdaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::vec& >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
-    Rcpp::traits::input_parameter< int >::type m(mSEXP);
-    rcpp_result_gen = Rcpp::wrap(nlogl_binom(beta, X, y, m));
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< const double >::type lambda(lambdaSEXP);
+    rcpp_result_gen = Rcpp::wrap(nlogl_binom(beta, X, y, m, lambda));
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpparma_hello_world
-arma::mat rcpparma_hello_world();
-RcppExport SEXP _fastsgd_rcpparma_hello_world() {
+// nlogl_binom_grad
+arma::mat nlogl_binom_grad(const arma::sp_mat& beta, const arma::sp_mat& X, const arma::sp_mat& y, const int m, const double lambda);
+RcppExport SEXP _sparselogit_nlogl_binom_grad(SEXP betaSEXP, SEXP XSEXP, SEXP ySEXP, SEXP mSEXP, SEXP lambdaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(rcpparma_hello_world());
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< const double >::type lambda(lambdaSEXP);
+    rcpp_result_gen = Rcpp::wrap(nlogl_binom_grad(beta, X, y, m, lambda));
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpparma_outerproduct
-arma::mat rcpparma_outerproduct(const arma::colvec& x);
-RcppExport SEXP _fastsgd_rcpparma_outerproduct(SEXP xSEXP) {
+// binom_fit
+List binom_fit(const arma::sp_mat& X, const arma::sp_mat& y, const int m, const double lambda, const int minibatch, const int max_epochs, const double step_scale, const double tol, const double conv_autocor, const bool history, const int eval_every);
+RcppExport SEXP _sparselogit_binom_fit(SEXP XSEXP, SEXP ySEXP, SEXP mSEXP, SEXP lambdaSEXP, SEXP minibatchSEXP, SEXP max_epochsSEXP, SEXP step_scaleSEXP, SEXP tolSEXP, SEXP conv_autocorSEXP, SEXP historySEXP, SEXP eval_everySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpparma_outerproduct(x));
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< const double >::type lambda(lambdaSEXP);
+    Rcpp::traits::input_parameter< const int >::type minibatch(minibatchSEXP);
+    Rcpp::traits::input_parameter< const int >::type max_epochs(max_epochsSEXP);
+    Rcpp::traits::input_parameter< const double >::type step_scale(step_scaleSEXP);
+    Rcpp::traits::input_parameter< const double >::type tol(tolSEXP);
+    Rcpp::traits::input_parameter< const double >::type conv_autocor(conv_autocorSEXP);
+    Rcpp::traits::input_parameter< const bool >::type history(historySEXP);
+    Rcpp::traits::input_parameter< const int >::type eval_every(eval_everySEXP);
+    rcpp_result_gen = Rcpp::wrap(binom_fit(X, y, m, lambda, minibatch, max_epochs, step_scale, tol, conv_autocor, history, eval_every));
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpparma_innerproduct
-double rcpparma_innerproduct(const arma::colvec& x);
-RcppExport SEXP _fastsgd_rcpparma_innerproduct(SEXP xSEXP) {
+// binom_fit_lazy
+List binom_fit_lazy(const arma::sp_mat& X, const arma::sp_mat& y, const int m, const double lambda, const int minibatch, const int max_epochs, const double step_scale, const double tol, const double conv_autocor, const bool history, const int eval_every);
+RcppExport SEXP _sparselogit_binom_fit_lazy(SEXP XSEXP, SEXP ySEXP, SEXP mSEXP, SEXP lambdaSEXP, SEXP minibatchSEXP, SEXP max_epochsSEXP, SEXP step_scaleSEXP, SEXP tolSEXP, SEXP conv_autocorSEXP, SEXP historySEXP, SEXP eval_everySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpparma_innerproduct(x));
-    return rcpp_result_gen;
-END_RCPP
-}
-// rcpparma_bothproducts
-Rcpp::List rcpparma_bothproducts(const arma::colvec& x);
-RcppExport SEXP _fastsgd_rcpparma_bothproducts(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpparma_bothproducts(x));
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< const double >::type lambda(lambdaSEXP);
+    Rcpp::traits::input_parameter< const int >::type minibatch(minibatchSEXP);
+    Rcpp::traits::input_parameter< const int >::type max_epochs(max_epochsSEXP);
+    Rcpp::traits::input_parameter< const double >::type step_scale(step_scaleSEXP);
+    Rcpp::traits::input_parameter< const double >::type tol(tolSEXP);
+    Rcpp::traits::input_parameter< const double >::type conv_autocor(conv_autocorSEXP);
+    Rcpp::traits::input_parameter< const bool >::type history(historySEXP);
+    Rcpp::traits::input_parameter< const int >::type eval_every(eval_everySEXP);
+    rcpp_result_gen = Rcpp::wrap(binom_fit_lazy(X, y, m, lambda, minibatch, max_epochs, step_scale, tol, conv_autocor, history, eval_every));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_fastsgd_sigmoid", (DL_FUNC) &_fastsgd_sigmoid, 2},
-    {"_fastsgd_nlogl_binom", (DL_FUNC) &_fastsgd_nlogl_binom, 4},
-    {"_fastsgd_rcpparma_hello_world", (DL_FUNC) &_fastsgd_rcpparma_hello_world, 0},
-    {"_fastsgd_rcpparma_outerproduct", (DL_FUNC) &_fastsgd_rcpparma_outerproduct, 1},
-    {"_fastsgd_rcpparma_innerproduct", (DL_FUNC) &_fastsgd_rcpparma_innerproduct, 1},
-    {"_fastsgd_rcpparma_bothproducts", (DL_FUNC) &_fastsgd_rcpparma_bothproducts, 1},
+    {"_sparselogit_sigmoid", (DL_FUNC) &_sparselogit_sigmoid, 1},
+    {"_sparselogit_nlogl_binom", (DL_FUNC) &_sparselogit_nlogl_binom, 5},
+    {"_sparselogit_nlogl_binom_grad", (DL_FUNC) &_sparselogit_nlogl_binom_grad, 5},
+    {"_sparselogit_binom_fit", (DL_FUNC) &_sparselogit_binom_fit, 11},
+    {"_sparselogit_binom_fit_lazy", (DL_FUNC) &_sparselogit_binom_fit_lazy, 11},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_fastsgd(DllInfo *dll) {
+RcppExport void R_init_sparselogit(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

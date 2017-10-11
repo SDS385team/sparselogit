@@ -6,8 +6,8 @@
 #' @param eps: real number of truncation paramaeter if output is close to 0/1 
 #' @return sigmoid evaluate at input u with truncation
 #' @export
-sigmoid <- function(u, eps = 1e-6) {
-    .Call('_fastsgd_sigmoid', PACKAGE = 'fastsgd', u, eps)
+sigmoid <- function(A) {
+    .Call(`_sparselogit_sigmoid`, A)
 }
 
 #' @title Negative LogLikelihood of Binomial GLM
@@ -17,23 +17,40 @@ sigmoid <- function(u, eps = 1e-6) {
 #' @param m: integer controlling the max number of successes in binomial response y
 #' @return the negative loglikelihood evaluated at the input
 #' @export
-nlogl_binom <- function(beta, X, y, m) {
-    .Call('_fastsgd_nlogl_binom', PACKAGE = 'fastsgd', beta, X, y, m)
+nlogl_binom <- function(beta, X, y, m = 1L, lambda = 0.0) {
+    .Call(`_sparselogit_nlogl_binom`, beta, X, y, m, lambda)
 }
 
-rcpparma_hello_world <- function() {
-    .Call('_fastsgd_rcpparma_hello_world', PACKAGE = 'fastsgd')
+#' @title Gradient Negative LogLikelihood of Binomial GLM
+#' @param beta: numeric vector of parameters of linear model
+#' @param X: numeric matrix with predictor variables
+#' @param y: numeric vector with response variable
+#' @param m: integer controlling the max number of successes in binomial response y
+#' @return matrix with one column with the gradient of the negative loglikelihood evaluated at the input
+#' @export
+nlogl_binom_grad <- function(beta, X, y, m = 1L, lambda = 0.0) {
+    .Call(`_sparselogit_nlogl_binom_grad`, beta, X, y, m, lambda)
 }
 
-rcpparma_outerproduct <- function(x) {
-    .Call('_fastsgd_rcpparma_outerproduct', PACKAGE = 'fastsgd', x)
+#' @title Fit Logistic Regression with AdaGrad SGD
+#' @param beta: numeric vector of parameters of linear model
+#' @param X: numeric matrix with predictor variables
+#' @param y: numeric vector with response variable
+#' @param m: integer controlling the max number of successes in binomial response y
+#' @return matrix with one column with the gradient of the negative loglikelihood evaluated at the input
+#' @export
+binom_fit <- function(X, y, m = 1L, lambda = 0.0, minibatch = 1L, max_epochs = 1e3L, step_scale = 1.0, tol = 1e-6, conv_autocor = .06, history = FALSE, eval_every = 1L) {
+    .Call(`_sparselogit_binom_fit`, X, y, m, lambda, minibatch, max_epochs, step_scale, tol, conv_autocor, history, eval_every)
 }
 
-rcpparma_innerproduct <- function(x) {
-    .Call('_fastsgd_rcpparma_innerproduct', PACKAGE = 'fastsgd', x)
-}
-
-rcpparma_bothproducts <- function(x) {
-    .Call('_fastsgd_rcpparma_bothproducts', PACKAGE = 'fastsgd', x)
+#' @title Fit Logistic Regression with AdaGrad SGD
+#' @param beta: numeric vector of parameters of linear model
+#' @param X: numeric matrix with predictor variables
+#' @param y: numeric vector with response variable
+#' @param m: integer controlling the max number of successes in binomial response y
+#' @return matrix with one column with the gradient of the negative loglikelihood evaluated at the input
+#' @export
+binom_fit_lazy <- function(X, y, m = 1L, lambda = 0.0, minibatch = 1L, max_epochs = 1e3L, step_scale = 1.0, tol = 1e-6, conv_autocor = .06, history = FALSE, eval_every = 1L) {
+    .Call(`_sparselogit_binom_fit_lazy`, X, y, m, lambda, minibatch, max_epochs, step_scale, tol, conv_autocor, history, eval_every)
 }
 

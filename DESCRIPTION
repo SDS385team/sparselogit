@@ -1,4 +1,4 @@
-Package: fastsgd
+Package: sparselogit
 Type: Package
 Title: What the package does (short line)
 Version: 1.0
@@ -8,5 +8,5 @@ Maintainer: Who to complain to <yourfault@somewhere.net>
 Description: More about what it does (maybe more than one line)
 License: What license is it under?
 Imports: Rcpp (>= 0.12.12)
-LinkingTo: Rcpp, RcppArmadillo
+LinkingTo: Rcpp, RcppArmadillo, functional
 RoxygenNote: 6.0.1
