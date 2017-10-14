@@ -10,7 +10,7 @@ using namespace std;
 //' @title Sigmoid function with truncation
 //' @param u: numeric vector of input
 //' @param eps: real number of truncation paramaeter if output is close to 0/1 
-//' @return sigmoid evaluate at input u with truncation
+// ' @return sigmoid evaluate at input u with truncation
 //' @export
 // [[Rcpp::export]]
 arma::mat sigmoid(const arma::sp_mat & A) {
@@ -96,7 +96,7 @@ arma::mat nlogl_binom_grad(const arma::sp_mat & beta,
 //' @export
 // [[Rcpp::export]]
 List binom_fit_lazy(const arma::sp_mat & beta0,
-                    const arma::sp_mat & X,
+                    const arma::sp_mat & Xt,
                     const arma::sp_mat & y,
                     const int m = 1,
                     const double lambda = 0.0,
@@ -108,19 +108,19 @@ List binom_fit_lazy(const arma::sp_mat & beta0,
                     const bool history = false,
                     const int eval_every = 1,
                     const bool verbose = false) {
-  int N = X.n_rows, P = X.n_cols;
+  int N = Xt.n_cols, P = Xt.n_rows;
   // Initialize beta
   sp_mat beta = beta0;
   // Initialize lazy update tracker
   mat last_updated(P, 1, fill::zeros); 
   // Initiate adagrad sum of squares that determine the weights
-  mat adagrad_ss(P, 1);
+  mat adagrad_ss(P, 1, fill::zeros);
   mat adagrad_wts(P, 1, fill::zeros);
   // Create variables for minibatches indices and data
   int start_row = 0, end_row = minibatch - 1;
-  sp_mat Xbatch = X.rows(start_row, end_row);
+  sp_mat Xbatch = Xt.cols(start_row, end_row).t();
   sp_mat ybatch = y.rows(start_row, end_row);
-  adagrad_ss = square(nlogl_binom_grad(beta, Xbatch, ybatch, m, lambda));
+  // adagrad_ss = square(nlogl_binom_grad(beta, Xbatch, ybatch, m, lambda));
   // Initiate variables that detect convergence
   bool converged = false;
   double ll = nlogl_binom(beta, Xbatch, ybatch, m, lambda);
@@ -138,7 +138,7 @@ List binom_fit_lazy(const arma::sp_mat & beta0,
     double fitted = 1 / (1 + exp(-reg));
     // ..grad terms & adagrad update
     double grad_term = 0.0, debt = 0.0;
-    int missing_updates = 0, sgn = 0;
+    int missing_updates, sgn;
     for (sp_mat::const_iterator j = Xbatch.begin(); j != Xbatch.end(); ++j) {
       // ..compute debt
       missing_updates = it - last_updated[j.col()] - 1;
@@ -177,7 +177,7 @@ List binom_fit_lazy(const arma::sp_mat & beta0,
     else {
       start_row = ((it + 1) % (epoch_iter - 1)) * minibatch;
       end_row = start_row + minibatch - 1;
-      Xbatch = X.rows(start_row, end_row);
+      Xbatch = Xt.cols(start_row, end_row).t();
       ybatch = y.rows(start_row, end_row);
     }
   }
