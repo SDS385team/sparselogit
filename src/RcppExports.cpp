@@ -6,96 +6,27 @@
 
 using namespace Rcpp;
 
-// sigmoid
-arma::mat sigmoid(const arma::sp_mat A);
-RcppExport SEXP _sparselogit_sigmoid(SEXP ASEXP) {
+// sparse_logit
+List sparse_logit(const arma::vec& beta0, const arma::sp_mat& Xt, const arma::vec& y, const double lambda, const int maxepochs, const double step_scale, const double tol, const double discount);
+RcppExport SEXP _sparselogit_sparse_logit(SEXP beta0SEXP, SEXP XtSEXP, SEXP ySEXP, SEXP lambdaSEXP, SEXP maxepochsSEXP, SEXP step_scaleSEXP, SEXP tolSEXP, SEXP discountSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::sp_mat >::type A(ASEXP);
-    rcpp_result_gen = Rcpp::wrap(sigmoid(A));
-    return rcpp_result_gen;
-END_RCPP
-}
-// nlogl_binom
-double nlogl_binom(const arma::sp_mat& beta, const arma::sp_mat& X, const arma::sp_mat& y, const int m, const double lambda);
-RcppExport SEXP _sparselogit_nlogl_binom(SEXP betaSEXP, SEXP XSEXP, SEXP ySEXP, SEXP mSEXP, SEXP lambdaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::sp_mat& >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< const arma::sp_mat& >::type X(XSEXP);
-    Rcpp::traits::input_parameter< const arma::sp_mat& >::type y(ySEXP);
-    Rcpp::traits::input_parameter< const int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type beta0(beta0SEXP);
+    Rcpp::traits::input_parameter< const arma::sp_mat& >::type Xt(XtSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const double >::type lambda(lambdaSEXP);
-    rcpp_result_gen = Rcpp::wrap(nlogl_binom(beta, X, y, m, lambda));
-    return rcpp_result_gen;
-END_RCPP
-}
-// nlogl_binom_grad
-arma::mat nlogl_binom_grad(const arma::sp_mat& beta, const arma::sp_mat& X, const arma::sp_mat& y, const int m, const double lambda);
-RcppExport SEXP _sparselogit_nlogl_binom_grad(SEXP betaSEXP, SEXP XSEXP, SEXP ySEXP, SEXP mSEXP, SEXP lambdaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::sp_mat& >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< const arma::sp_mat& >::type X(XSEXP);
-    Rcpp::traits::input_parameter< const arma::sp_mat& >::type y(ySEXP);
-    Rcpp::traits::input_parameter< const int >::type m(mSEXP);
-    Rcpp::traits::input_parameter< const double >::type lambda(lambdaSEXP);
-    rcpp_result_gen = Rcpp::wrap(nlogl_binom_grad(beta, X, y, m, lambda));
-    return rcpp_result_gen;
-END_RCPP
-}
-// binom_fit
-List binom_fit(const arma::sp_mat& X, const arma::sp_mat& y, const int m, const double lambda, const int minibatch, const int max_epochs, const double step_scale, const double tol, const double conv_autocor, const bool history, const int eval_every);
-RcppExport SEXP _sparselogit_binom_fit(SEXP XSEXP, SEXP ySEXP, SEXP mSEXP, SEXP lambdaSEXP, SEXP minibatchSEXP, SEXP max_epochsSEXP, SEXP step_scaleSEXP, SEXP tolSEXP, SEXP conv_autocorSEXP, SEXP historySEXP, SEXP eval_everySEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::sp_mat& >::type X(XSEXP);
-    Rcpp::traits::input_parameter< const arma::sp_mat& >::type y(ySEXP);
-    Rcpp::traits::input_parameter< const int >::type m(mSEXP);
-    Rcpp::traits::input_parameter< const double >::type lambda(lambdaSEXP);
-    Rcpp::traits::input_parameter< const int >::type minibatch(minibatchSEXP);
-    Rcpp::traits::input_parameter< const int >::type max_epochs(max_epochsSEXP);
+    Rcpp::traits::input_parameter< const int >::type maxepochs(maxepochsSEXP);
     Rcpp::traits::input_parameter< const double >::type step_scale(step_scaleSEXP);
     Rcpp::traits::input_parameter< const double >::type tol(tolSEXP);
-    Rcpp::traits::input_parameter< const double >::type conv_autocor(conv_autocorSEXP);
-    Rcpp::traits::input_parameter< const bool >::type history(historySEXP);
-    Rcpp::traits::input_parameter< const int >::type eval_every(eval_everySEXP);
-    rcpp_result_gen = Rcpp::wrap(binom_fit(X, y, m, lambda, minibatch, max_epochs, step_scale, tol, conv_autocor, history, eval_every));
-    return rcpp_result_gen;
-END_RCPP
-}
-// binom_fit_lazy
-List binom_fit_lazy(const arma::sp_mat& X, const arma::sp_mat& y, const int m, const double lambda, const int minibatch, const int max_epochs, const double step_scale, const double tol, const double conv_autocor, const bool history, const int eval_every);
-RcppExport SEXP _sparselogit_binom_fit_lazy(SEXP XSEXP, SEXP ySEXP, SEXP mSEXP, SEXP lambdaSEXP, SEXP minibatchSEXP, SEXP max_epochsSEXP, SEXP step_scaleSEXP, SEXP tolSEXP, SEXP conv_autocorSEXP, SEXP historySEXP, SEXP eval_everySEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::sp_mat& >::type X(XSEXP);
-    Rcpp::traits::input_parameter< const arma::sp_mat& >::type y(ySEXP);
-    Rcpp::traits::input_parameter< const int >::type m(mSEXP);
-    Rcpp::traits::input_parameter< const double >::type lambda(lambdaSEXP);
-    Rcpp::traits::input_parameter< const int >::type minibatch(minibatchSEXP);
-    Rcpp::traits::input_parameter< const int >::type max_epochs(max_epochsSEXP);
-    Rcpp::traits::input_parameter< const double >::type step_scale(step_scaleSEXP);
-    Rcpp::traits::input_parameter< const double >::type tol(tolSEXP);
-    Rcpp::traits::input_parameter< const double >::type conv_autocor(conv_autocorSEXP);
-    Rcpp::traits::input_parameter< const bool >::type history(historySEXP);
-    Rcpp::traits::input_parameter< const int >::type eval_every(eval_everySEXP);
-    rcpp_result_gen = Rcpp::wrap(binom_fit_lazy(X, y, m, lambda, minibatch, max_epochs, step_scale, tol, conv_autocor, history, eval_every));
+    Rcpp::traits::input_parameter< const double >::type discount(discountSEXP);
+    rcpp_result_gen = Rcpp::wrap(sparse_logit(beta0, Xt, y, lambda, maxepochs, step_scale, tol, discount));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_sparselogit_sigmoid", (DL_FUNC) &_sparselogit_sigmoid, 1},
-    {"_sparselogit_nlogl_binom", (DL_FUNC) &_sparselogit_nlogl_binom, 5},
-    {"_sparselogit_nlogl_binom_grad", (DL_FUNC) &_sparselogit_nlogl_binom_grad, 5},
-    {"_sparselogit_binom_fit", (DL_FUNC) &_sparselogit_binom_fit, 11},
-    {"_sparselogit_binom_fit_lazy", (DL_FUNC) &_sparselogit_binom_fit_lazy, 11},
+    {"_sparselogit_sparse_logit", (DL_FUNC) &_sparselogit_sparse_logit, 8},
     {NULL, NULL, 0}
 };
 

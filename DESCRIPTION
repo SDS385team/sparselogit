@@ -1,12 +1,15 @@
 Package: sparselogit
 Type: Package
-Title: What the package does (short line)
+Title: Run logistic regression on sparse large data
 Version: 1.0
 Date: 2017-10-10
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Author: Mauricio Garcia Tec
+Maintainer: Mauricio Garcia Tec <mauriciogtec@outlook.com>
+Description: Run lasso logistic regression on sparse large data
+License: MIT
 Imports: Rcpp (>= 0.12.12)
-LinkingTo: Rcpp, RcppArmadillo, functional
+LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 6.0.1
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr

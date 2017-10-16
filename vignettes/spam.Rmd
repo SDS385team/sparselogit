@@ -1,0 +1,120 @@
+---
+title: "Predicting SPAM with large logistic model"
+author: "Mauricio G Tec"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Predicting SPAM with large logistic model}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, echo = FALSE}
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+To read our data we would use somethng like
+
+```{r}
+library(sparselogit)
+library(readsvm) # install with devtools::install_github("SDS385team/readsvm")
+```
+
+```{r, eval = FALSE}
+svm <- read_sparse_svm("D:/Datasets/full_url_svmlight.svm")
+```
+
+After reading it, we can store it as binary data for local purpose as
+
+```{r, eval = FALSE}
+res <- read_sparse_svm("D:/Datasets/full_url_svmlight.svm")
+saveRDS(res, "D:/Datasets/full_url_svmlight.RDS")
+```
+
+And then read it faster with
+
+```{r, eval = FALSE}
+res <- readRDS("D:/Datasets/full_url_svmlight.RDS")
+```
+
+Since Support Vector Machine inputs the vector as -1,1 we should adjust
+
+```{r, eval = FALSE}
+y <- as.integer(res$response == 1)
+table(y)
+```
+
+We can now run one pass (epoch) of our model like this (it runs in about 6.7 seconds):
+
+```{r, eval = FALSE}
+P <- nrow(res$features)
+beta0 <- numeric(P)
+system.time({
+  mod <- sparse_logit(beta0, res$features, y, step_scale = 2, lambda = 1e-8, maxepochs = 1)
+})
+```
+
+```{r, eval = FALSE}
+save(beta0, mod, y, file = "Example.RData")
+```
+
+```{r, include = FALSE}
+load("Example.Rdata")
+```
+
+We compare predictions and original data
+
+```{r}
+fitted_rounded <- round(mod$fitted)
+table(y, fitted_rounded)
+```
+ 
+We have the following accuracy rate
+
+```{r}
+sum(y == fitted_rounded) / length(y)
+```
+
+We can sort and plot a few values of the coefficients
+
+```{r}
+plot(sort(sample(mod$coefficients, 10000)), type = "l", col = "blue", main = "Regression coefficients")
+```
+
+We can now run 10 epochs and see the improvment
+
+```{r, eval = FALSE}
+system.time({
+  mod10 <- sparse_logit(beta0, res$features, y, step_scale = 2, lambda = 1e-8, maxepochs = 10)
+})
+```
+
+```{r, eval = FALSE}
+save(beta0, y, mod10, file = "Example2.RData")
+```
+
+```{r}
+load("Example2.RData")
+```
+
+We compare predictions and original data
+
+```{r}
+fitted_rounded <- round(mod10$fitted)
+table(y, fitted_rounded)
+```
+ 
+We have the following accuracy rate
+
+```{r}
+sum(y == fitted_rounded) / length(y)
+```
+
+We can sort and plot a few values of the coefficients
+
+```{r}
+plot(sort(sample(mod10$coefficients, 10000)), type = "l", col = "red", main = "Regression coefficients")
+```
+

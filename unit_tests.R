@@ -1,35 +1,31 @@
 library(Matrix)
+library(readsvm)
+# library(microbenchmark)
 
-X <- readRDS("D:/Github/SDS385/Exercises/Solutions04/Xtoy.RDS")
-y <- readRDS("D:/Github/SDS385/Exercises/Solutions04/ytoy.RDS")
+# res <- read_sparse_svm("D:/Datasets/full_url_svmlight.svm", return_tranpose = FALSE)
+# saveRDS(res, "D:/Datasets/full_url_svmlight.RDS")
+res <- readRDS("D:/Datasets/full_url_svmlight.RDS")
+nsample <- ncol(res$features)
+# nsample <- 2
+psample <- nrow(res$features)
 
-nsample <- 10
-psample <- 3e6
+# Xt <- res$features[1:psample, 1:nsample, drop = FALSE]
+y <- as.integer(res$response[1:nsample] == 1)
+table(y)
 
-X <- X[1:nsample, 1:psample, drop = FALSE]
-Xt <- t(X)
-y <- Matrix(y[1:nsample, , drop = FALSE], sparse = TRUE)
-
-m = 1
-lambda = 1e-6
-
-beta0 <- Matrix(0, nrow = ncol(X), sparse = TRUE)
+beta0 <- numeric(psample)
 
 system.time({
-  res <- binom_fit_lazy(beta0, Xt, y, lambda = lambda, m = m, max_epochs = 1, 
-                        verbose = FALSE, eval_every = nrow(X), tol = 1e-3)
+  mod <- sparse_logit(beta0, res$features, y, step_scale = 2, lambda = 1e-8, maxepochs = 100)
 })
 
+mod$alpha
+summary(mod$coefficients)
+hist(sample(mod$fitted))
 
-nlogl_binom(res$coefficients, X, y, m, lambda)
-fitted <- round(1 / (1 + exp(- X %*% res$coefficients)))
-sum(fitted == y) / nrow(y)
+fitted_rounded <- round(mod$fitted)
+table(y, fitted_rounded)
+sum(y == fitted_rounded) / length(y)
 
-b <- glm.fit(as.matrix(X), as.numeric(y))$coefficients
-b[is.na(b)] <- 0
-
-nlogl_binom(Matrix(b, sparse= TRUE), X, y, m, lambda)
-fitted <- round(1 / (1 + exp(- X %*% b)))
-sum(fitted == y) / nrow(y)
-
+plot(sort(sample(mod$coefficients, 1e4)), type = "l")
 
